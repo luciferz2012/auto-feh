@@ -1,0 +1,40 @@
+{
+    "events": {
+        "select": {
+            "fight-beginner.png": "start"
+        },
+        "start": {
+            "button-fight.png": "restore1"
+        },
+        "restore1": {
+            "__none__": "auto1",
+            "button-restore.png": "restore2"
+        },
+        "restore2": {
+            "__wait__": 10,
+            "button-close.png": "auto1"
+        },
+        "auto1": {
+            "__wait__": 10,
+            "__delay__": 3,
+            "menu-auto-battle.png": "auto2"
+        },
+        "auto2": {
+            "button-auto-battle.png": "clear"
+        },
+        "clear": {
+            "__wait__": 60,
+            "title-stage-clear.png": "confirm1"
+        },
+        "confirm1": {
+            "__wait__": 10,
+            "button-close.png": "confirm2"
+        },
+        "confirm2": {
+            "__loop__": 10,
+            "button-close.png": "__end__",
+            "button-skip.png": "__end__"
+        }
+    },
+    "start": "select"
+}
