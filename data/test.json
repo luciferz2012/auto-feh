@@ -7,6 +7,7 @@
             "button-fight.png": "restore1"
         },
         "restore1": {
+            "__sleep__": 1,
             "__none__": "auto1",
             "button-restore.png": "restore2"
         },
@@ -36,5 +37,7 @@
             "button-skip.png": "__end__"
         }
     },
-    "start": "select"
+    "start": "select",
+    "width": 675,
+    "height": 987
 }
