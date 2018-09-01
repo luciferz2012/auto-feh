@@ -3,8 +3,11 @@
 from os import mkdir, listdir
 from os.path import exists, abspath, dirname, join, isfile, splitext
 from json import load
-from lackey import App, FindFailed
+from lackey import SettingsMaster, App, FindFailed
 from cv2 import imread, resize, imwrite  # pylint: disable=e0611
+
+SettingsMaster.InfoLogs = False
+SettingsMaster.ActionLogs = False
 
 
 class AppEx(App):
@@ -41,7 +44,7 @@ class AppEx(App):
                         fy = h / height
                         factor = (fx + fy) / 2
                         self.resize_images(img_dir, tmp_dir, factor)
-                        img_dir = tmp_dir
+                    img_dir = tmp_dir
                 for i in range(times):
                     handler = EventHandler(window, events, img_dir, start)
                     handler.run_all()
@@ -72,10 +75,10 @@ class EventHandler():
             for i in range(loop):
                 max_score = 0
                 max_match = None
+                self.region.wait(sleep)
                 for key, value in event.items():
                     if key.startswith('__') and key.endswith('__'):
                         continue
-                    self.region.wait(sleep)
                     img_path = join(self.img_dir, key)
                     match = self.try_find(img_path, wait)
                     if match:
@@ -87,6 +90,7 @@ class EventHandler():
                 if max_match:
                     self.region.wait(delay)
                     max_match.click()
+                    print(self.name, ':', key, '->', value)
                 else:
                     break
             if max_name:

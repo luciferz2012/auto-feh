@@ -12,6 +12,7 @@
             "button-restore.png": "restore2"
         },
         "restore2": {
+            "__sleep__": 1,
             "__wait__": 10,
             "button-close.png": "auto1"
         },
@@ -33,6 +34,7 @@
         },
         "confirm2": {
             "__loop__": 10,
+            "__sleep__": 1,
             "button-close.png": "__end__",
             "button-skip.png": "__end__"
         }
