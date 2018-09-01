@@ -31,21 +31,21 @@ class AppEx(App):
             start = json.get('start')
             window = self.window(index)
             if events and start and window:
-                w = window.getW()
-                h = window.getH()
-                print(w, h)
+                window_width = window.getW()
+                window_height = window.getH()
+                print(window_width, window_height)
                 width = json.get('width')
                 height = json.get('height')
                 if width and height:
-                    tmp_dir = '{0}_{1}x{2}_tmp'.format(img_dir, w, h)
+                    tmp_dir = '{0}_{1}x{2}_tmp'.format(img_dir, window_width, window_height)
                     if not exists(tmp_dir):
                         mkdir(tmp_dir)
-                        fx = w / width
-                        fy = h / height
-                        factor = (fx + fy) / 2
+                        factor_x = window_width / width
+                        factor_y = window_height / height
+                        factor = (factor_x + factor_y) / 2
                         self.resize_images(img_dir, tmp_dir, factor)
                     img_dir = tmp_dir
-                for i in range(times):
+                for _ in range(times):
                     handler = EventHandler(window, events, img_dir, start)
                     handler.run_all()
 
@@ -72,9 +72,10 @@ class EventHandler():
             wait = event.get('__wait__', 3)
             delay = event.get('__delay__', 0)
             max_name = None
-            for i in range(loop):
+            for _ in range(loop):
                 max_score = 0
                 max_match = None
+                max_img = None
                 self.region.wait(sleep)
                 for key, value in event.items():
                     if key.startswith('__') and key.endswith('__'):
@@ -87,10 +88,11 @@ class EventHandler():
                             max_score = score
                             max_match = match
                             max_name = value
+                            max_img = key
                 if max_match:
                     self.region.wait(delay)
                     max_match.click()
-                    print(self.name, ':', key, '->', value)
+                    print('{0}: {1}({2}) -> {3}'.format(self.name, max_img, max_score, max_name))
                 else:
                     break
             if max_name:
@@ -101,7 +103,7 @@ class EventHandler():
             self.name = '__end__'
 
     def run_all(self):
-        for i in range(1024):
+        for _ in range(1024):
             if self.name != '__end__':
                 self.run_once()
 
