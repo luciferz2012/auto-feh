@@ -49,7 +49,7 @@ class TaskHandler():
     def _handle_tasks(self):
         while self.tasks:
             if self.child_recv_connection.poll():
-                message = self.child_recv_connection.recv():
+                message = self.child_recv_connection.recv()
                 if message.get('stop'):
                     self.tasks[0].stop(message.get('force'))
             self.tasks[0].run(self.child_send_connection)
