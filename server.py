@@ -32,7 +32,8 @@ class Task():
 
 
 class TaskHandler():
-    def __init__(self):
+    def __init__(self, feh):
+        self.feh = feh
         self.tasks = []
         self.process = None
         self.parent_send_connection, self.child_recv_connection = Pipe()
@@ -80,6 +81,7 @@ class TaskHandler():
         return [{'name': task.name, 'times': task.times} for task in self.update_tasks()]
 
     def on_get(self, _, resp):
+        self.feh.focus()
         resp.body = dumps(self.list_tasks(), ensure_ascii=False)
 
 
