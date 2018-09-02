@@ -14,20 +14,16 @@ class Task():
         self.walker = walker
         self.times = times
 
-    def run(self, out_connection):
-        out_connection.send({'times': self.times})
+    def run(self, child_send_connection):
         while self.times:
             print()
             print(self.name, self.times)
             self.times = self.times - 1
-            out_connection.send({'times': self.times})
+            child_send_connection.send({'times': self.times})
             self.walker.walk_through()
             if self.walker.name == '__stop__':
-                out_connection.send({'stop': True})
-                print('child_send_stop')
                 break
             elif self.walker.name == '__reset__':
-                out_connection.send({'reset': True})
                 break
 
     def stop(self, force=False):
@@ -45,25 +41,22 @@ class TaskHandler():
     def handle_tasks(self):
         if self.process and self.process.is_alive():
             return False
-        args = [self.child_recv_connection, self.child_send_connection]
-        self.process = Process(target=self._handle_tasks, args=args)
+        self.process = Process(target=self._handle_tasks)
         self.process.start()
         return True
 
-    def _handle_tasks(self, in_connection, out_connection):
+    def _handle_tasks(self):
         while self.tasks:
-            if in_connection.poll():
-                message = in_connection.recv()
-                task = message.get('task')
-                if task:
-                    self.tasks.append(task)
-                elif message.get('stop'):
-                    print('parent_recv_stop')
-                    break
-                elif message.get('reset'):  # todo
-                    break
-            self.tasks[0].run(out_connection)
-            self.tasks.pop(0)
+            if self.child_recv_connection.poll():
+                message = self.child_recv_connection.recv():
+                if message.get('stop'):
+                    self.tasks[0].stop(message.get('force'))
+            self.tasks[0].run(self.child_send_connection)
+            task = self.tasks.pop(0)
+            if task.name == '__stop__':
+                break
+            if task.name == '__reset__':
+                break
 
     def add_tasks(self, task):
         self.tasks.append(task)
@@ -79,6 +72,9 @@ class TaskHandler():
             if self.tasks and self.tasks[0].times <= 0:
                 self.tasks.pop(0)
         return self.tasks
+
+    def stop(self, force=False):
+        self.parent_send_connection.send({'stop': True, 'force': force})
 
     def list_tasks(self):
         return [{'name': task.name, 'times': task.times} for task in self.update_tasks()]
@@ -127,7 +123,7 @@ class Server():
         simple_server.make_server('0.0.0.0', 3388, self.falcon).serve_forever()
 
     def stop(self):
-        pass
+        self.handler.stop()
 
 
 def _chdir():
