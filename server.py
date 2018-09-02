@@ -24,6 +24,7 @@ class Task():
             self.walker.walk_through()
             if self.walker.name == '__stop__':
                 out_connection.send({'stop': True})
+                print('child_send_stop')
                 break
             elif self.walker.name == '__reset__':
                 out_connection.send({'reset': True})
@@ -57,6 +58,7 @@ class TaskHandler():
                 if task:
                     self.tasks.append(task)
                 elif message.get('stop'):
+                    print('parent_recv_stop')
                     break
                 elif message.get('reset'):  # todo
                     break

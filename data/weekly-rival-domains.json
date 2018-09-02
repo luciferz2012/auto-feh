@@ -128,13 +128,7 @@
         "bookmark2": {
             "__none__": "error",
             "button-delete.png": "home",
-            "button-resume.png": "bookmark3"
-        },
-        "bookmark3": {
-            "__sleep__": 3,
-            "__none__": "auto",
-            "title-end.png": "confirm",
-            "title-game-over.png": "give-up"
+            "button-don't-resume.png":"home"
         },
         "home": {
             "__sleep__": 10,

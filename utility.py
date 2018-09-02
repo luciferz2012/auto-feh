@@ -136,7 +136,6 @@ class EventWalker():
 
 def _chdir():
     from os import chdir
-    # from os.path import abspath, dirname
     from sys import argv
     chdir(dirname(abspath(argv[0])))
 
