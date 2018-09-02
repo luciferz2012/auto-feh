@@ -3,7 +3,9 @@
 from json import dumps
 from multiprocessing import Process, Pipe
 from os.path import basename, splitext
+from time import sleep
 from wsgiref import simple_server
+from keyboard import send
 from falcon import API
 from utility import AppEx
 
@@ -16,11 +18,13 @@ class Task():
 
     def run(self, child_send_connection):
         while self.times:
-            print('\n\t', self.name, self.times)
+            print('\n', self.name, self.times)
             self.times = self.times - 1
             child_send_connection.send({'times': self.times})
             self.walker.walk_through()
-            if self.walker.name in ['__stop__', '__reset__']:
+            if self.walker.name == '__stop__':
+                break
+            if self.walker.name == '__reset__':  # todo
                 break
 
     def stop(self, force=False):
@@ -53,7 +57,7 @@ class TaskHandler():
             task = self.tasks.pop(0)
             if task.name == '__stop__':
                 break
-            if task.name == '__reset__':
+            if task.name == '__reset__': # todo
                 break
 
     def add_tasks(self, task):
@@ -100,6 +104,16 @@ class TaskWrapper():
         self.on_post(req, resp, times)
 
 
+def no_teamviewer():
+    while True:
+        teamviewer = AppEx('Sponsored session')
+        teamviewer.focus()
+        window = teamviewer.window()
+        if window:
+            send('enter')
+        sleep(5)
+
+
 class Server():
     def __init__(self):
         self.falcon = API()
@@ -117,6 +131,7 @@ class Server():
         self.falcon.add_route('/events/fb/{times}', bonds)
         domains = TaskWrapper('data/weekly-rival-domains.json', self)
         self.falcon.add_route('/maps/wrd/{times}', domains)
+        Process(target=no_teamviewer).start()
         simple_server.make_server('0.0.0.0', 3388, self.falcon).serve_forever()
 
     def stop(self):
