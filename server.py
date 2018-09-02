@@ -42,7 +42,6 @@ class Task():
 
 class TaskHandler():
     def __init__(self, manager):
-        self.manager = manager
         self.tasks = manager.list()
         self.process = None
 
@@ -66,21 +65,23 @@ class TaskHandler():
 
 
 class TaskWrapper():
-    def __init__(self, name, handler, feh, window):
+    def __init__(self, name, server):
         self.name = name
-        self.handler = handler
-        self.feh = feh
-        self.window = window
+        self.server = server
 
     def on_post(self, _, resp, times):  # post
         if isinstance(times, str):
             times = int(times)
-        walker = self.feh.load_walker('data/forging-bonds.json', self.window)
+        feh = self.server.feh
+        window = self.server.window
+        manager = self.server.manager
+        handler = self.server.handler
+        walker = feh.load_walker('data/forging-bonds.json', window)
         name = 'forging-bonds({0})'.format(times)
-        task = Task(name, walker, self.handler.manager, times)
-        self.handler.tasks.append(task)
-        self.handler.handle_tasks()
-        resp.body = dumps(self.handler.list_tasks(), ensure_ascii=False)
+        task = Task(name, walker, manager, times)
+        handler.tasks.append(task)
+        handler.handle_tasks()
+        resp.body = dumps(handler.list_tasks(), ensure_ascii=False)
 
     def on_get(self, req, resp, times):
         self.on_post(req, resp, times)
@@ -91,15 +92,17 @@ class Server():
         self.falcon = API()
         self.feh = AppEx('(feh)')
         self.window = None
+        self.manager = None
         self.handler = None
 
     def start(self):
-        self.handler = TaskHandler(Manager())
-        self.window = self.feh.window()
         self.feh.focus()
+        self.window = self.feh.window()
+        self.manager = Manager()
+        self.handler = TaskHandler(self.manager)
         self.falcon.add_route('/', self.handler)
-        self.falcon.add_route('/events/forging-bonds/{times}',
-                              TaskWrapper('forging-bonds', self.handler, self.feh, self.window))
+        forging_bonds = TaskWrapper('forging-bonds', self)
+        self.falcon.add_route('/events/forging-bonds/{times}', forging_bonds)
         simple_server.make_server('0.0.0.0', 3388, self.falcon).serve_forever()
 
     def stop(self):
