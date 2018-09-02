@@ -137,10 +137,12 @@
             "menu-battle.png": "home"
         },
         "bookmark2": {
-            "__loop__": 2,
             "__none__": "error",
             "button-delete.png": "home",
-            "button-don't-resume.png": "home"
+            "button-don't-resume.png": "bookmark3"
+        },
+        "bookmark3": {
+            "button-delete.png": "home"
         },
         "home": {
             "__sleep__": 10,
