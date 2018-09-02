@@ -89,7 +89,7 @@ class Server():
         self.falcon.add_route('/', Test())
         self.falcon.add_route('/events/forging-bonds/{times}',
                               TaskWrapper('forging-bonds', self.handler, self.feh, self.window))
-        simple_server.make_server('0.0.0.0', 8085, self.falcon).serve_forever()
+        simple_server.make_server('0.0.0.0', 3388, self.falcon).serve_forever()
 
     def stop(self):
         pass
