@@ -1,32 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from json import dumps
-from multiprocessing import Process, Manager
+from multiprocessing import Process, Pipe
 from wsgiref import simple_server
 from falcon import API
 from utility import AppEx
 
 
 class Task():
-    def __init__(self, name, walker, manager, times):
+    def __init__(self, name, walker, times):
         self.name = name
         self.walker = walker
-        self._times = manager.Value('i', times)
+        self.times = times
 
-    @property
-    def times(self):
-        return self._times.value
-
-    @times.setter
-    def times(self, times):
-        self._times.value = times
-
-    def run(self):
+    def run(self, out_connection):
+        out_connection.send({'times': self.times})
         while self.times:
             print()
             print(self.name, self.times)
             print()
             self.times = self.times - 1
+            out_connection.send({'times': self.times})
             if self.walker.name == '__stop__':
                 break
             elif self.walker.name == '__reset__':
@@ -41,24 +35,49 @@ class Task():
 
 
 class TaskHandler():
-    def __init__(self, manager):
-        self.tasks = manager.list()
+    def __init__(self):
+        self.tasks = []
         self.process = None
+        self.parent_send_connection, self.child_recv_connection = Pipe()
+        self.parent_recv_connection, self.child_send_connection = Pipe()
 
     def handle_tasks(self):
         if self.process and self.process.is_alive():
             return False
-        self.process = Process(target=self._handle_tasks)
+        args = [self.child_recv_connection, self.child_send_connection]
+        self.process = Process(target=self._handle_tasks, args=args)
         self.process.start()
         return True
 
-    def _handle_tasks(self):
+    def _handle_tasks(self, in_connection, out_connection):
         while self.tasks:
-            self.tasks[0].run()
+            if in_connection.poll():
+                message = in_connection.recv()
+                task = message.get('task')
+                if task:
+                    self.tasks.append(task)
+                elif message.get('stop', False):
+                    break
+            self.tasks[0].run(out_connection)
             self.tasks.pop(0)
 
+    def add_tasks(self, task):
+        self.tasks.append(task)
+        if not self.handle_tasks():
+            self.parent_send_connection.send({'task': task})
+
+    def update_tasks(self):
+        while self.parent_recv_connection.poll():
+            message = self.parent_recv_connection.recv()
+            times = message.get('times', -1)
+            if times != -1 and self.tasks:
+                self.tasks[0].times = times
+            if self.tasks[0].times <= 0:
+                self.tasks.pop(0)
+        return self.tasks
+
     def list_tasks(self):
-        return [{'name': task.name, 'times': task.times} for task in self.tasks]
+        return [{'name': task.name, 'times': task.times} for task in self.update_tasks()]
 
     def on_get(self, _, resp):
         resp.body = dumps(self.list_tasks(), ensure_ascii=False)
@@ -74,13 +93,11 @@ class TaskWrapper():
             times = int(times)
         feh = self.server.feh
         window = self.server.window
-        manager = self.server.manager
         handler = self.server.handler
         walker = feh.load_walker('data/forging-bonds.json', window)
         name = 'forging-bonds({0})'.format(times)
-        task = Task(name, walker, manager, times)
-        handler.tasks.append(task)
-        handler.handle_tasks()
+        task = Task(name, walker, times)
+        handler.add_tasks(task)
         resp.body = dumps(handler.list_tasks(), ensure_ascii=False)
 
     def on_get(self, req, resp, times):
@@ -92,14 +109,13 @@ class Server():
         self.falcon = API()
         self.feh = AppEx('(feh)')
         self.window = None
-        self.manager = None
         self.handler = None
 
     def start(self):
         self.feh.focus()
         self.window = self.feh.window()
-        self.manager = Manager()
-        self.handler = TaskHandler(self.manager)
+        print(self.window.getW(), self.window.getH())
+        self.handler = TaskHandler()
         self.falcon.add_route('/', self.handler)
         forging_bonds = TaskWrapper('forging-bonds', self)
         self.falcon.add_route('/events/forging-bonds/{times}', forging_bonds)

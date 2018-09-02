@@ -1,7 +1,7 @@
 {
     "events": {
         "select": {
-            "__none__": "error",
+            "__none__": "android",
             "fight-beginner.png": "start"
         },
         "start": {
@@ -67,7 +67,6 @@
             "__none__": "error3",
             "menu-auto-battle.png": "auto2",
             "button-close.png": "confirm2",
-            "button-apps": "apps",
             "button-back.png": "return",
             "button-return-to-title-screen-red.png": "return",
             "menu-battle.png": "battle",
@@ -95,6 +94,9 @@
             "menu-battle.png": "battle",
             "button-close-cross.png": "home",
             "button-quit.png": "__stop__"
+        },
+        "android": {
+            "button-apps.png": "apps"
         },
         "apps": {
             "app-feh.png": "title"
