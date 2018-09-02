@@ -3,8 +3,8 @@
 from json import dumps
 from multiprocessing import Process, Manager
 from wsgiref import simple_server
-from utility import AppEx
 from falcon import API
+from utility import AppEx
 
 
 class Task():
@@ -44,12 +44,13 @@ class TaskHandler():
     def _handle_tasks(self):
         while self.tasks:
             self.tasks[0].run()
-            print(len(self.tasks))
             self.tasks.pop(0)
-            print(len(self.tasks))
 
     def list_tasks(self):
         return [{'name': task.name, 'times': task.times} for task in self.tasks]
+
+    def on_get(self, _, resp):
+        resp.body = dumps(self.list_tasks(), ensure_ascii=False)
 
 
 class TaskWrapper():
@@ -59,8 +60,7 @@ class TaskWrapper():
         self.feh = feh
         self.window = window
 
-    def on_get(self, req, resp, times):  # post
-        print(len(self.handler.tasks))
+    def on_post(self, _, resp, times):  # post
         if isinstance(times, str):
             times = int(times)
         walker = self.feh.load_walker('data/forging-bonds.json', self.window)
@@ -69,10 +69,8 @@ class TaskWrapper():
         self.handler.handle_tasks()
         resp.body = dumps(self.handler.list_tasks(), ensure_ascii=False)
 
-
-class Test():
-    def on_get(self, req, resp):
-        resp.body = 'Hello, World!'
+    def on_get(self, req, resp, times):
+        self.on_post(req, resp, times)
 
 
 class Server():
@@ -86,7 +84,7 @@ class Server():
         self.handler = TaskHandler(Manager())
         self.window = self.feh.window()
         self.feh.focus()
-        self.falcon.add_route('/', Test())
+        self.falcon.add_route('/', self.handler)
         self.falcon.add_route('/events/forging-bonds/{times}',
                               TaskWrapper('forging-bonds', self.handler, self.feh, self.window))
         simple_server.make_server('0.0.0.0', 3388, self.falcon).serve_forever()
