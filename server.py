@@ -8,13 +8,10 @@ from utility import AppEx
 
 
 class Task():
-    NUM = 0
-    PREFIX = "__task__"
-
     def __init__(self, name, walker, manager, times):
         self.name = name
         self.walker = walker
-        self._times = manager.Value(self.PREFIX + self.NUM, times)
+        self._times = manager.Value('i', times)
 
     @property
     def times(self):
