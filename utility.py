@@ -122,8 +122,11 @@ class EventWalker():
     def walk_through(self):
         self.name = self.start
         for _ in range(1024):
-            if self.name not in ['__end__', '__stop__', '__reset__'] and not self.stop:
-                self.walk_once()
+            if self.stop:
+                self.name = '__stop__'
+            if self.name in ['__end__', '__stop__', '__reset__']:
+                break
+            self.walk_once()
 
 
 def _chdir():

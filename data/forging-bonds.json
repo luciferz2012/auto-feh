@@ -66,6 +66,7 @@
         "error2": {
             "__sleep__": 60,
             "__none__": "__reset__",
+            "menu-auto-battle.png": "auto2",
             "button-back.png": "return",
             "button-return-to-title-screen-red.png": "return",
             "menu-battle.png": "battle",
