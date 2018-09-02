@@ -141,7 +141,13 @@ def main():
     print(window.getW(), window.getH())
     walker = app.load_walker('data/test.json', window)
     for _ in range(15):
-        walker.walk_through()
+        if walker.name == '__stop__':
+            break
+        elif walker.name == '__reset__':
+            # todo
+            break
+        else:
+            walker.walk_through()
 
 
 if __name__ == '__main__':
