@@ -116,7 +116,7 @@ class Server():
         self.feh.focus()
         self.window = self.feh.window()
         print(self.window.getW(), self.window.getH())
-        self.handler = TaskHandler()
+        self.handler = TaskHandler(self.feh)
         self.falcon.add_route('/', self.handler)
         bonds = TaskWrapper('data/forging-bonds.json', self)
         self.falcon.add_route('/events/fb/{times}', bonds)
