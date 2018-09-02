@@ -67,6 +67,7 @@
             "__none__": "error3",
             "menu-auto-battle.png": "auto2",
             "button-close.png": "confirm2",
+            "button-apps": "apps",
             "button-back.png": "return",
             "button-return-to-title-screen-red.png": "return",
             "menu-battle.png": "battle",
@@ -95,13 +96,22 @@
             "button-close-cross.png": "home",
             "button-quit.png": "__stop__"
         },
+        "apps": {
+            "app-feh.png": "title"
+        },
         "return": {
             "button-return-to-title-screen.png": "title"
         },
         "title": {
             "__wait__": 60,
             "__none__": "error",
-            "title-feh.png": "home"
+            "title-feh.png": "bookmark"
+        },
+        "bookmark": {
+            "__wait__": 60,
+            "button-delete.png": "home",
+            "button-resume.png": "home",
+            "menu-battle.png": "home"
         },
         "home": {
             "__sleep__": 10,
