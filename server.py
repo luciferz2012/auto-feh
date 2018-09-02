@@ -18,7 +18,8 @@ class Task():
 
     def run(self, child_send_connection):
         while self.times:
-            print('\n', self.name, self.times)
+            print()
+            print(self.name, self.times)
             self.times = self.times - 1
             child_send_connection.send({'times': self.times})
             self.walker.walk_through()
@@ -57,7 +58,7 @@ class TaskHandler():
             task = self.tasks.pop(0)
             if task.name == '__stop__':
                 break
-            if task.name == '__reset__': # todo
+            if task.name == '__reset__':  # todo
                 break
 
     def add_tasks(self, task):
@@ -107,9 +108,8 @@ class TaskWrapper():
 def no_teamviewer():
     while True:
         teamviewer = AppEx('Sponsored session')
-        teamviewer.focus()
-        window = teamviewer.window()
-        if window:
+        if teamviewer.isValid():
+            teamviewer.focus()
             send('enter')
         sleep(5)
 
