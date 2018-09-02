@@ -8,10 +8,21 @@ from utility import AppEx
 
 
 class Task():
-    def __init__(self, name, walker, times):
+    NUM = 0
+    PREFIX = "__task__"
+
+    def __init__(self, name, walker, manager, times):
         self.name = name
         self.walker = walker
-        self.times = times
+        self._times = manager.Value(self.PREFIX + self.NUM, times)
+
+    @property
+    def times(self):
+        return self._times.value
+
+    @times.setter
+    def times(self, times):
+        self._times.value = times
 
     def run(self):
         while self.times:
@@ -34,6 +45,7 @@ class Task():
 
 class TaskHandler():
     def __init__(self, manager):
+        self.manager = manager
         self.tasks = manager.list()
         self.process = None
 
@@ -67,7 +79,8 @@ class TaskWrapper():
         if isinstance(times, str):
             times = int(times)
         walker = self.feh.load_walker('data/forging-bonds.json', self.window)
-        task = Task('forging-bonds({0})'.format(times), walker, times)
+        name = 'forging-bonds({0})'.format(times)
+        task = Task(name, walker, self.handler.manager, times)
         self.handler.tasks.append(task)
         self.handler.handle_tasks()
         resp.body = dumps(self.handler.list_tasks(), ensure_ascii=False)
