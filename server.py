@@ -15,6 +15,9 @@ class Task():
 
     def run(self):
         while self.times:
+            print()
+            print(self.name, self.times)
+            print()
             self.times = self.times - 1
             if self.walker.name == '__stop__':
                 break
