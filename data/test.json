@@ -1,22 +1,24 @@
 {
     "events": {
         "select": {
+            "__none__": "error",
             "fight-beginner.png": "start"
         },
         "start": {
-            "button-fight.png": "restore1"
+            "button-fight.png": "restore"
         },
-        "restore1": {
+        "restore": {
             "__sleep__": 1,
-            "__none__": "auto1",
+            "__none__": "auto",
             "button-restore.png": "restore2"
         },
         "restore2": {
             "__sleep__": 1,
             "__wait__": 10,
-            "button-close.png": "auto1"
+            "__none__": "error",
+            "button-close.png": "auto"
         },
-        "auto1": {
+        "auto": {
             "__wait__": 10,
             "__delay__": 3,
             "menu-auto-battle.png": "auto2"
@@ -25,10 +27,28 @@
             "button-auto-battle.png": "clear"
         },
         "clear": {
-            "__wait__": 60,
-            "title-stage-clear.png": "confirm1"
+            "__wait__": 120,
+            "__none__": "clear2",
+            "title-stage-clear.png": "confirm"
         },
-        "confirm1": {
+        "over": {
+            "__wait__": 60,
+            "__none__": "cancel",
+            "title-game-over.png": "over"
+        },
+        "cancel": {
+            "menu-cancel-auto-battle.png": "menu"
+        },
+        "menu": {
+            "button-surrender-blue.png": "surrender"
+        },
+        "surrender": {
+            "button-surrender.png": "select"
+        },
+        "give-up": {
+            "button-give-up.png": "select"
+        },
+        "confirm": {
             "__wait__": 10,
             "button-close.png": "confirm2"
         },
@@ -37,6 +57,47 @@
             "__sleep__": 1,
             "button-close.png": "__end__",
             "button-skip.png": "__end__"
+        },
+        "error": {
+            "__none__": "error2",
+            "button-retry.png": "__last__",
+            "menu-battle.png": "battle"
+        },
+        "error2": {
+            "__sleep__": 60,
+            "__none__": "__reset__",
+            "button-back.png": "return",
+            "button-return-to-title-screen-red.png": "return",
+            "menu-battle.png": "battle",
+            "button-close-cross.png": "home",
+            "button-quit.png": "__stop__"
+        },
+        "return": {
+            "button-return-to-title-screen.png": "title"
+        },
+        "title": {
+            "__wait__": 60,
+            "__none__": "error",
+            "title-feh.png": "home"
+        },
+        "home": {
+            "__sleep__": 10,
+            "__loop__": 10,
+            "__none__": "home2",
+            "button-close.png": "home2",
+            "button-close-cross.png": "home2"
+        },
+        "home2": {
+            "menu-battle.png": "battle"
+        },
+        "battle": {
+            "battle-events.png": "events"
+        },
+        "events": {
+            "events-forging-bonds.png": "forging-bonds"
+        },
+        "forging-bonds": {
+            "button-select-stage.png": "select"
         }
     },
     "start": "select",

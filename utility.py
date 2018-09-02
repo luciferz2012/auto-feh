@@ -23,39 +23,46 @@ class AppEx(App):
                     des_image = resize(src_image, None, fx=factor, fy=factor)
                     imwrite(des_path, des_image)
 
-    def run_json(self, path, times=1, index=0):
+    @staticmethod
+    def handle_images(img_dir, json, region):
+        json_width = json.get('width')
+        json_height = json.get('height')
+        if json_width and json_height:
+            region_width = region.getW()
+            region_height = region.getH()
+            tmp_dir = '{0}_{1}x{2}_tmp'\
+                .format(img_dir, region_width, region_height)
+            if not exists(tmp_dir):
+                mkdir(tmp_dir)
+                factor_x = region_width / json_width
+                factor_y = region_height / json_height
+                factor = (factor_x + factor_y) / 2
+                AppEx.resize_images(img_dir, tmp_dir, factor)
+            return tmp_dir
+        return img_dir
+
+    @staticmethod
+    def load_walker(path, region):
         img_dir = dirname(abspath(path))
         with open(path) as file:
             json = load(file)
             events = json.get('events')
             start = json.get('start')
-            window = self.window(index)
-            if events and start and window:
-                window_width = window.getW()
-                window_height = window.getH()
-                print(window_width, window_height)
-                width = json.get('width')
-                height = json.get('height')
-                if width and height:
-                    tmp_dir = '{0}_{1}x{2}_tmp'.format(img_dir, window_width, window_height)
-                    if not exists(tmp_dir):
-                        mkdir(tmp_dir)
-                        factor_x = window_width / width
-                        factor_y = window_height / height
-                        factor = (factor_x + factor_y) / 2
-                        self.resize_images(img_dir, tmp_dir, factor)
-                    img_dir = tmp_dir
-                for _ in range(times):
-                    handler = EventHandler(window, events, img_dir, start)
-                    handler.run_all()
+            if events and start:
+                img_dir = AppEx.handle_images(img_dir, json, region)
+                return EventWalker(events, start, region, img_dir)
+        return None
 
 
-class EventHandler():
-    def __init__(self, region, events, img_dir, name):
-        self.region = region
+class EventWalker():
+    def __init__(self, events, start, region, img_dir):
         self.events = events
+        self.start = start
+        self.region = region
         self.img_dir = img_dir
-        self.name = name
+        self.stop = False
+        self.name = start
+        self.last = '__end__'
 
     def try_find(self, pattern, wait=0):
         try:
@@ -64,48 +71,59 @@ class EventHandler():
         except FindFailed:
             pass
 
-    def run_once(self):
+    def best_match(self, event):
+        loop = event.get('__loop__', 1)
+        sleep = event.get('__sleep__', 0)
+        wait = event.get('__wait__', 3)
+        delay = event.get('__delay__', 0)
+        max_name = None
+        for _ in range(loop):
+            max_score = 0
+            max_match = None
+            max_img = None
+            self.region.wait(sleep)
+            for key, value in event.items():
+                if key.startswith('__') and key.endswith('__'):
+                    continue
+                match = self.try_find(join(self.img_dir, key), wait)
+                if match and match.getScore() > max_score:
+                    max_name = value
+                    max_score = match.getScore()
+                    max_match = match
+                    max_img = key
+            if max_match:
+                self.region.wait(delay)
+                max_match.click()
+                print('{0}: {1}({2:.2}) -> {3}'
+                      .format(self.name, max_img, max_score, max_name))
+            else:
+                break
+        return max_name
+
+    def walk_once(self):
         event = self.events.get(self.name)
         if event:
-            loop = event.get('__loop__', 1)
-            sleep = event.get('__sleep__', 0)
-            wait = event.get('__wait__', 3)
-            delay = event.get('__delay__', 0)
-            max_name = None
-            for _ in range(loop):
-                max_score = 0
-                max_match = None
-                max_img = None
-                self.region.wait(sleep)
-                for key, value in event.items():
-                    if key.startswith('__') and key.endswith('__'):
-                        continue
-                    img_path = join(self.img_dir, key)
-                    match = self.try_find(img_path, wait)
-                    if match:
-                        score = match.getScore()
-                        if score > max_score:
-                            max_score = score
-                            max_match = match
-                            max_name = value
-                            max_img = key
-                if max_match:
-                    self.region.wait(delay)
-                    max_match.click()
-                    print('{0}: {1}({2}) -> {3}'.format(self.name, max_img, max_score, max_name))
-                else:
-                    break
-            if max_name:
-                self.name = max_name
+            name = self.best_match(event)
+            if name == '__last__':
+                self.name = self.last
+                self.last = '__end__'
             else:
-                self.name = event.get('__none__', '__end__')
+                self.last = self.name
+                if name:
+                    self.name = name
+                else:
+                    self.name = event.get('__none__', '__end__')
+                    print('{0}: no match -> {1}'.format(self.last, self.name))
         else:
+            self.last = self.name
             self.name = '__end__'
+            print('{0}: not found'.format(self.last))
 
-    def run_all(self):
+    def walk_through(self):
+        self.name = self.start
         for _ in range(1024):
-            if self.name != '__end__':
-                self.run_once()
+            if self.name not in ['__end__', '__stop__', '__reset__'] and not self.stop:
+                self.walk_once()
 
 
 def _chdir():
@@ -119,7 +137,11 @@ def main():
     _chdir()
     app = AppEx('(feh)')
     app.focus()
-    app.run_json('data/test.json', 11)
+    window = app.window()
+    print(window.getW(), window.getH())
+    walker = app.load_walker('data/test.json', window)
+    for _ in range(15):
+        walker.walk_through()
 
 
 if __name__ == '__main__':
