@@ -18,14 +18,11 @@ class Task():
 
     def run(self, child_send_connection):
         while self.times:
-            print()
-            print(self.name, self.times)
+            print('\n{0}: {1}'.format(self.name, self.times))
             self.times = self.times - 1
             child_send_connection.send({'times': self.times})
             self.walker.walk_through()
-            if self.walker.name == '__stop__':
-                break
-            if self.walker.name == '__reset__':  # todo
+            if self.walker.name in ['__stop__', '__reset__']:
                 break
 
     def stop(self, force=False):
@@ -49,17 +46,20 @@ class TaskHandler():
 
     def _handle_tasks(self):
         while self.tasks:
-            if self.child_recv_connection.poll():
-                message = self.child_recv_connection.recv()
-                if message.get('stop'):
-                    self.tasks[0].stop(message.get('force'))
-                    break
             self.tasks[0].run(self.child_send_connection)
             task = self.tasks.pop(0)
             if task.name == '__stop__':
                 break
             if task.name == '__reset__':  # todo
                 break
+            if self.child_recv_connection.poll():
+                message = self.child_recv_connection.recv()
+                task = message.get('task')
+                if task:
+                    self.tasks.append(task)
+                if message.get('stop'):
+                    self.tasks[0].stop(message.get('force'))
+                    break
 
     def add_tasks(self, task):
         self.tasks.append(task)
