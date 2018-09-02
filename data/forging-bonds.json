@@ -64,7 +64,29 @@
             "menu-battle.png": "battle"
         },
         "error2": {
+            "__sleep__": 30,
+            "__none__": "error3",
+            "menu-auto-battle.png": "auto2",
+            "button-close.png": "confirm2",
+            "button-back.png": "return",
+            "button-return-to-title-screen-red.png": "return",
+            "menu-battle.png": "battle",
+            "button-close-cross.png": "home",
+            "button-quit.png": "__stop__"
+        },
+        "error3": {
             "__sleep__": 60,
+            "__none__": "error4",
+            "menu-auto-battle.png": "auto2",
+            "button-close.png": "confirm2",
+            "button-back.png": "return",
+            "button-return-to-title-screen-red.png": "return",
+            "menu-battle.png": "battle",
+            "button-close-cross.png": "home",
+            "button-quit.png": "__stop__"
+        },
+        "error4": {
+            "__sleep__": 300,
             "__none__": "__reset__",
             "menu-auto-battle.png": "auto2",
             "button-close.png": "confirm2",
