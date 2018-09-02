@@ -2,11 +2,11 @@
     "events": {
         "select": {
             "__none__": "android",
-            "fight-lunatic.png": "start"
+            "fight-wrd-lunatic.png": "start"
         },
         "select2": {
             "__none__": "error",
-            "fight-lunatic.png": "start"
+            "fight-wrd-lunatic.png": "start"
         },
         "start": {
             "button-fight.png": "auto"
@@ -56,7 +56,7 @@
         },
         "end": {
             "__none__": "__stop__",
-            "fight-lunatic.png": "__end__"
+            "fight-wrd-lunatic.png": "__end__"
         },
         "error": {
             "__none__": "error2",

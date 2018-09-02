@@ -2,11 +2,11 @@
     "events": {
         "select": {
             "__none__": "android",
-            "fight-beginner.png": "start"
+            "fight-fb-beginner.png": "start"
         },
         "select2": {
             "__none__": "error",
-            "fight-beginner.png": "start"
+            "fight-fb-beginner.png": "start"
         },
         "start": {
             "button-fight.png": "restore"
@@ -67,7 +67,7 @@
         },
         "end": {
             "__none__": "__stop__",
-            "fight-beginner.png": "__end__"
+            "fight-fb-beginner.png": "__end__"
         },
         "error": {
             "__none__": "error2",
