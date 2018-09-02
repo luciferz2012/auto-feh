@@ -2,29 +2,18 @@
     "events": {
         "select": {
             "__none__": "android",
-            "fight-beginner.png": "start"
+            "fight-lunatic.png": "start"
         },
         "select2": {
             "__none__": "error",
-            "fight-beginner.png": "start"
+            "fight-lunatic.png": "start"
         },
         "start": {
-            "button-fight.png": "restore"
-        },
-        "restore": {
-            "__sleep__": 1,
-            "__none__": "auto",
-            "button-restore.png": "restore2"
-        },
-        "restore2": {
-            "__sleep__": 1,
-            "__wait__": 10,
-            "__none__": "error",
-            "button-close.png": "auto"
+            "button-fight.png": "auto"
         },
         "auto": {
-            "__wait__": 10,
-            "__delay__": 3,
+            "__wait__": 15,
+            "__delay__": 10,
             "__none__": "error",
             "menu-auto-battle.png": "auto2"
         },
@@ -32,14 +21,14 @@
             "button-auto-battle.png": "clear"
         },
         "clear": {
-            "__wait__": 60,
+            "__wait__": 120,
             "__none__": "clear2",
-            "title-stage-clear.png": "confirm"
+            "title-end.png": "confirm"
         },
         "clear2": {
             "__sleep__": 60,
             "__none__": "cancel",
-            "title-stage-clear.png": "confirm",
+            "title-end.png": "confirm",
             "title-game-over.png": "give-up"
         },
         "give-up": {
@@ -56,7 +45,7 @@
         },
         "confirm": {
             "__wait__": 10,
-            "button-close.png": "confirm2"
+            "button-ok.png": "confirm2"
         },
         "confirm2": {
             "__loop__": 10,
@@ -67,7 +56,7 @@
         },
         "end": {
             "__none__": "__stop__",
-            "fight-beginner.png": "__end__"
+            "fight-lunatic.png": "__end__"
         },
         "error": {
             "__none__": "error2",
@@ -144,7 +133,7 @@
         "bookmark3": {
             "__sleep__": 3,
             "__none__": "auto",
-            "title-stage-clear.png": "confirm",
+            "title-end.png": "confirm",
             "title-game-over.png": "give-up"
         },
         "home": {
@@ -158,13 +147,10 @@
             "menu-battle.png": "battle"
         },
         "battle": {
-            "battle-events.png": "events"
+            "battle-special-maps.png": "special-maps"
         },
-        "events": {
-            "events-forging-bonds.png": "forging-bonds"
-        },
-        "forging-bonds": {
-            "button-select-stage.png": "select2"
+        "special-maps": {
+            "map-weekly-rival-domains.png": "select2"
         }
     },
     "start": "select",

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from json import dumps
 from multiprocessing import Process, Pipe
+from os.path import basename, splitext
 from wsgiref import simple_server
 from falcon import API
 from utility import AppEx
@@ -18,16 +19,15 @@ class Task():
         while self.times:
             print()
             print(self.name, self.times)
-            print()
             self.times = self.times - 1
             out_connection.send({'times': self.times})
+            self.walker.walk_through()
             if self.walker.name == '__stop__':
+                out_connection.send({'stop': True})
                 break
             elif self.walker.name == '__reset__':
-                # todo
+                out_connection.send({'reset': True})
                 break
-            else:
-                self.walker.walk_through()
 
     def stop(self, force=False):
         self.times = 0
@@ -56,7 +56,9 @@ class TaskHandler():
                 task = message.get('task')
                 if task:
                     self.tasks.append(task)
-                elif message.get('stop', False):
+                elif message.get('stop'):
+                    break
+                elif message.get('reset'):  # todo
                     break
             self.tasks[0].run(out_connection)
             self.tasks.pop(0)
@@ -72,7 +74,7 @@ class TaskHandler():
             times = message.get('times', -1)
             if times != -1 and self.tasks:
                 self.tasks[0].times = times
-            if self.tasks[0].times <= 0:
+            if self.tasks and self.tasks[0].times <= 0:
                 self.tasks.pop(0)
         return self.tasks
 
@@ -84,19 +86,18 @@ class TaskHandler():
 
 
 class TaskWrapper():
-    def __init__(self, name, server):
-        self.name = name
+    def __init__(self, path, server):
+        self.name = splitext(basename(path))[0]
+        self.path = path
         self.server = server
 
-    def on_post(self, _, resp, times):  # post
-        if isinstance(times, str):
-            times = int(times)
+    def on_post(self, _, resp, times):
         feh = self.server.feh
         window = self.server.window
         handler = self.server.handler
-        walker = feh.load_walker('data/forging-bonds.json', window)
-        name = 'forging-bonds({0})'.format(times)
-        task = Task(name, walker, times)
+        walker = feh.load_walker(self.path, window)
+        name = '{0}({1})'.format(self.name, times)
+        task = Task(name, walker, int(times))
         handler.add_tasks(task)
         resp.body = dumps(handler.list_tasks(), ensure_ascii=False)
 
@@ -117,8 +118,10 @@ class Server():
         print(self.window.getW(), self.window.getH())
         self.handler = TaskHandler()
         self.falcon.add_route('/', self.handler)
-        forging_bonds = TaskWrapper('forging-bonds', self)
-        self.falcon.add_route('/events/forging-bonds/{times}', forging_bonds)
+        bonds = TaskWrapper('data/forging-bonds.json', self)
+        self.falcon.add_route('/events/fb/{times}', bonds)
+        domains = TaskWrapper('data/weekly-rival-domains.json', self)
+        self.falcon.add_route('/maps/wrd/{times}', domains)
         simple_server.make_server('0.0.0.0', 3388, self.falcon).serve_forever()
 
     def stop(self):
