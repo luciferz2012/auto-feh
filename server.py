@@ -16,14 +16,11 @@ class Task():
 
     def run(self, child_send_connection):
         while self.times:
-            print()
-            print(self.name, self.times)
+            print('\n\t', self.name, self.times)
             self.times = self.times - 1
             child_send_connection.send({'times': self.times})
             self.walker.walk_through()
-            if self.walker.name == '__stop__':
-                break
-            elif self.walker.name == '__reset__':
+            if self.walker.name in ['__stop__', '__reset__']:
                 break
 
     def stop(self, force=False):
@@ -32,8 +29,7 @@ class Task():
 
 
 class TaskHandler():
-    def __init__(self, feh):
-        self.feh = feh
+    def __init__(self):
         self.tasks = []
         self.process = None
         self.parent_send_connection, self.child_recv_connection = Pipe()
@@ -52,6 +48,7 @@ class TaskHandler():
                 message = self.child_recv_connection.recv()
                 if message.get('stop'):
                     self.tasks[0].stop(message.get('force'))
+                    break
             self.tasks[0].run(self.child_send_connection)
             task = self.tasks.pop(0)
             if task.name == '__stop__':
@@ -81,7 +78,6 @@ class TaskHandler():
         return [{'name': task.name, 'times': task.times} for task in self.update_tasks()]
 
     def on_get(self, _, resp):
-        self.feh.focus()
         resp.body = dumps(self.list_tasks(), ensure_ascii=False)
 
 
@@ -97,9 +93,8 @@ class TaskWrapper():
         handler = self.server.handler
         walker = feh.load_walker(self.path, window)
         name = '{0}({1})'.format(self.name, times)
-        task = Task(name, walker, int(times))
-        handler.add_tasks(task)
-        resp.body = dumps(handler.list_tasks(), ensure_ascii=False)
+        handler.add_tasks(Task(name, walker, int(times)))
+        handler.on_get(_, resp)
 
     def on_get(self, req, resp, times):
         self.on_post(req, resp, times)
@@ -116,7 +111,7 @@ class Server():
         self.feh.focus()
         self.window = self.feh.window()
         print(self.window.getW(), self.window.getH())
-        self.handler = TaskHandler(self.feh)
+        self.handler = TaskHandler()
         self.falcon.add_route('/', self.handler)
         bonds = TaskWrapper('data/forging-bonds.json', self)
         self.falcon.add_route('/events/fb/{times}', bonds)
