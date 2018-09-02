@@ -147,7 +147,7 @@ def main():
     app.focus()
     window = app.window()
     print(window.getW(), window.getH())
-    walker = app.load_walker('data/test.json', window)
+    walker = app.load_walker('data/weekly-rival-domains.json', window)
     for _ in range(15):
         walker.walk_through()
         if walker.name == '__stop__':
