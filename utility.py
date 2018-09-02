@@ -36,7 +36,11 @@ class AppEx(App):
                 mkdir(tmp_dir)
                 factor_x = region_width / json_width
                 factor_y = region_height / json_height
-                factor = (factor_x + factor_y) / 2
+                factor = min(factor_x, factor_y)
+                if factor > 1:
+                    factor = factor * 1.01
+                elif factor < 1:
+                    factor = factor * 0.99
                 AppEx.resize_images(img_dir, tmp_dir, factor)
             return tmp_dir
         return img_dir
@@ -145,13 +149,11 @@ def main():
     print(window.getW(), window.getH())
     walker = app.load_walker('data/test.json', window)
     for _ in range(15):
+        walker.walk_through()
         if walker.name == '__stop__':
             break
-        elif walker.name == '__reset__':
-            # todo
+        elif walker.name == '__reset__':  # todo
             break
-        else:
-            walker.walk_through()
 
 
 if __name__ == '__main__':
