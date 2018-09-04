@@ -55,8 +55,14 @@
             "button-skip.png": "end"
         },
         "end": {
-            "__none__": "__stop__",
-            "fight-lunatic.png": "__end__"
+            "__none__": "stop",
+            "fight-beginner.png": "__end__"
+        },
+        "stop":{
+            "__none__":"__stop__"
+        },
+        "reset":{
+            "__none__":"__reset__"
         },
         "error": {
             "__none__": "error2",
@@ -72,9 +78,9 @@
             "button-return-to-title-screen-red.png": "return",
             "menu-battle.png": "battle",
             "button-close-cross.png": "home",
-            "button-quit.png": "__stop__",
-            "button-apps.png": "__stop__",
-            "app-feh.png": "__stop__"
+            "button-quit.png": "stop",
+            "button-apps.png": "stop",
+            "app-feh.png": "stop"
         },
         "error3": {
             "__sleep__": 60,
@@ -86,13 +92,13 @@
             "button-return-to-title-screen-red.png": "return",
             "menu-battle.png": "battle",
             "button-close-cross.png": "home",
-            "button-quit.png": "__stop__",
-            "button-apps.png": "__stop__",
-            "app-feh.png": "__stop__"
+            "button-quit.png": "stop",
+            "button-apps.png": "stop",
+            "app-feh.png": "stop"
         },
         "error4": {
             "__sleep__": 300,
-            "__none__": "__reset__",
+            "__none__": "reset",
             "menu-auto-battle.png": "auto2",
             "button-ok.png": "confirm2",
             "button-close.png": "confirm2",
@@ -100,9 +106,9 @@
             "button-return-to-title-screen-red.png": "return",
             "menu-battle.png": "battle",
             "button-close-cross.png": "home",
-            "button-quit.png": "__stop__",
-            "button-apps.png": "__stop__",
-            "app-feh.png": "__stop__"
+            "button-quit.png": "stop",
+            "button-apps.png": "stop",
+            "app-feh.png": "stop"
         },
         "android": {
             "__none__": "error",

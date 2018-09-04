@@ -97,7 +97,7 @@ class EventWalker():
                     max_img = key
             if max_match:
                 self.region.wait(delay)
-                if max_name != '__end__':
+                if not (max_name.startswith('__') and max_name.endswith('__')):
                     max_match.click()
                 print('{0}: {1}({2:.2}) -> {3}'
                       .format(self.name, max_img, max_score, max_name))
