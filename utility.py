@@ -95,9 +95,11 @@ class EventWalker():
                     max_score = match.getScore()
                     max_match = match
                     max_img = key
+                    if max_score == 1:
+                        break
             if max_match:
                 self.region.wait(delay)
-                if max_name != '__end__':
+                if not (max_name.startswith('__') and max_name.endswith('__')):
                     max_match.click()
                 print('{0}: {1}({2:.2}) -> {3}'
                       .format(self.name, max_img, max_score, max_name))
@@ -149,9 +151,7 @@ def main():
     walker = app.load_walker('data/weekly-rival-domains.json', window)
     for _ in range(15):
         walker.walk_through()
-        if walker.name == '__stop__':
-            break
-        elif walker.name == '__reset__':  # todo
+        if walker.name in ['__stop__', '__reset__']:
             break
 
 
