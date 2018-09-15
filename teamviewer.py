@@ -11,7 +11,7 @@ def teamviewer():
         if teamviewer.isValid():
             teamviewer.focus()
             send('enter')
-        sleep(60)
+        sleep(5)
 
 
 def _chdir():
