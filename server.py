@@ -3,10 +3,8 @@
 from json import dumps
 from multiprocessing import Process, Pipe
 from os.path import basename, splitext
-from time import sleep
-from wsgiref import simple_server
-from keyboard import send
 from falcon import API
+from waitress import serve
 from utility import AppEx
 
 
@@ -105,15 +103,6 @@ class TaskWrapper():
         self.on_post(req, resp, times)
 
 
-def no_teamviewer():
-    while True:
-        teamviewer = AppEx('Sponsored session')
-        if teamviewer.isValid():
-            teamviewer.focus()
-            send('enter')
-        sleep(5)
-
-
 class Server():
     def __init__(self):
         self.falcon = API()
@@ -131,8 +120,9 @@ class Server():
         self.falcon.add_route('/events/fb/{times}', bonds)
         domains = TaskWrapper('data/weekly-rival-domains.json', self)
         self.falcon.add_route('/maps/wrd/{times}', domains)
-        Process(target=no_teamviewer).start()
-        simple_server.make_server('0.0.0.0', 3388, self.falcon).serve_forever()
+        battle = TaskWrapper('data/bound-hero-battle.json', self)
+        self.falcon.add_route('/maps/bhb/{times}', battle)
+        serve(self.falcon, port=3388)
 
     def stop(self):
         self.handler.stop()
