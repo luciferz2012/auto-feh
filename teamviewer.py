@@ -5,7 +5,7 @@ from keyboard import send
 from utility import AppEx
 
 
-def no_teamviewer():
+def teamviewer():
     while True:
         teamviewer = AppEx('Sponsored session')
         if teamviewer.isValid():
@@ -23,7 +23,7 @@ def _chdir():
 
 def main():
     _chdir()
-    no_teamviewer()
+    teamviewer()
 
 
 if __name__ == '__main__':
