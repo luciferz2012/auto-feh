@@ -38,11 +38,11 @@ In each state, the script searches for images shown in the emulator and clickes 
 ```
 
 Predefined properties of state:
-- loop, loop for current states (until N times or none) and switch to the first next state
-- sleep, sleep before searching
-- wait, wait for each images during searching
-- delay, delay before click (after searching)
-- none, if no images are found, switch to this state
+- __ loop __ , loop for current states (until N times or none) and switch to the first next state
+- __ sleep __ , sleep before searching
+- __ wait __ , wait for each images during searching
+- __ delay __ , delay before click (after searching)
+- __ none __ , if no images are found, switch to this state
 
 Predefined state (no click):
 - __ end __: normal end of a task
@@ -88,11 +88,11 @@ Predefined state (no click):
 ```
 
 预定义的状态属性:
-- loop, 重复本状态的次数，重复完或找不到时，跳转到第一个符合要求的状态
-- sleep, 搜索前停顿秒数
-- wait, 每个图片搜索时的等待秒数
-- delay, 搜索到图片后，点击前停顿的秒数
-- none, 当找不到任何指定的图片时，跳转到该状态
+- __ loop __ , 重复本状态的次数，重复完或找不到时，跳转到第一个符合要求的状态
+- __ sleep __ , 搜索前停顿秒数
+- __ wait __ , 每个图片搜索时的等待秒数
+- __ delay __ , 搜索到图片后，点击前停顿的秒数
+- __ none __ , 当找不到任何指定的图片时，跳转到该状态
 
 预定义的状态:
 - __ end __: 任务正常结束
