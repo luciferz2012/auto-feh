@@ -56,14 +56,16 @@
         },
         "confirm": {
             "__wait__": 10,
-            "button-close.png": "confirm2"
+            "button-close.png": "confirm2",
+            "fight-beginner.png": "__end__"
         },
         "confirm2": {
             "__loop__": 10,
             "__sleep__": 1,
             "__none__": "end",
             "button-close.png": "end",
-            "button-skip.png": "end"
+            "button-skip.png": "end",
+            "fight-beginner.png": "__end__"
         },
         "end": {
             "__none__": "stop",
