@@ -92,7 +92,8 @@
             "button-close-cross.png": "home",
             "button-quit.png": "stop",
             "button-apps.png": "stop",
-            "app-feh.png": "stop"
+            "app-feh.png": "stop",
+            "app-feh2.png": "stop"
         },
         "error3": {
             "__sleep__": 60,
@@ -107,7 +108,8 @@
             "button-close-cross.png": "home",
             "button-quit.png": "stop",
             "button-apps.png": "stop",
-            "app-feh.png": "stop"
+            "app-feh.png": "stop",
+            "app-feh2.png": "stop"
         },
         "error4": {
             "__sleep__": 300,
@@ -122,12 +124,14 @@
             "button-close-cross.png": "home",
             "button-quit.png": "stop",
             "button-apps.png": "stop",
-            "app-feh.png": "stop"
+            "app-feh.png": "stop",
+            "app-feh2.png": "stop"
         },
         "android": {
             "__none__": "error",
             "button-apps.png": "apps",
-            "app-feh.png": "title"
+            "app-feh.png": "title",
+            "app-feh2.png": "title"
         },
         "apps": {
             "app-feh.png": "title"
