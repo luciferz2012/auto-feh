@@ -1,5 +1,5 @@
 {
-    "events": {
+    "states": {
         "select": {
             "__none__": "android",
             "fight-beginner.png": "start"

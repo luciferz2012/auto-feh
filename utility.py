@@ -50,17 +50,17 @@ class AppEx(App):
         img_dir = dirname(abspath(path))
         with open(path) as file:
             json = load(file)
-            events = json.get('events')
+            states = json.get('states')
             start = json.get('start')
-            if events and start:
+            if states and start:
                 img_dir = AppEx.handle_images(img_dir, json, region)
-                return EventWalker(events, start, region, img_dir)
+                return StateWalker(states, start, region, img_dir)
         return None
 
 
-class EventWalker():
-    def __init__(self, events, start, region, img_dir):
-        self.events = events
+class StateWalker():
+    def __init__(self, states, start, region, img_dir):
+        self.states = states
         self.start = start
         self.region = region
         self.img_dir = img_dir
@@ -75,18 +75,18 @@ class EventWalker():
         except FindFailed:
             pass
 
-    def best_match(self, event):
-        loop = event.get('__loop__', 1)
-        sleep = event.get('__sleep__', 0)
-        wait = event.get('__wait__', 3)
-        delay = event.get('__delay__', 0)
+    def best_match(self, state):
+        loop = state.get('__loop__', 1)
+        sleep = state.get('__sleep__', 0)
+        wait = state.get('__wait__', 3)
+        delay = state.get('__delay__', 0)
         max_name = None
         for _ in range(loop):
             max_score = 0
             max_match = None
             max_img = None
             self.region.wait(sleep)
-            for key, value in event.items():
+            for key, value in state.items():
                 if key.startswith('__') and key.endswith('__'):
                     continue
                 match = self.try_find(join(self.img_dir, key), wait)
@@ -108,9 +108,9 @@ class EventWalker():
         return max_name
 
     def walk_once(self):
-        event = self.events.get(self.name)
-        if event:
-            name = self.best_match(event)
+        state = self.states.get(self.name)
+        if state:
+            name = self.best_match(state)
             if name == '__last__':
                 self.name = self.last
                 self.last = '__end__'
@@ -119,7 +119,7 @@ class EventWalker():
                 if name:
                     self.name = name
                 else:
-                    self.name = event.get('__none__', '__end__')
+                    self.name = state.get('__none__', '__end__')
                     print('{0}: no match -> {1}'.format(self.last, self.name))
         else:
             self.last = self.name
