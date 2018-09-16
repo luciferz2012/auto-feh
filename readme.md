@@ -70,6 +70,7 @@ Predefined state (no click):
     - http://localhost:3388/maps/bhb/{N} (N是整数), 添加N次绊英雄战任务
     - http://localhost:3388/maps/wrd/{N} (N是整数), 添加N次压制战任务
     - http://localhost:3388/events/fb/{N} (N是整数), 添加N次搜集思念任务
+- 如果通过Teamviewer来控制脚本，可运行以下命令来关闭弹窗： python teamviewer.py
 
 # 脚本
 
