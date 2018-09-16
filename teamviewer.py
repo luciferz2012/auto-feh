@@ -7,6 +7,7 @@ from utility import AppEx
 
 def teamviewer():
     while True:
+        print('check teamviewer')
         viewer = AppEx('Sponsored session')
         if viewer.isValid():
             viewer.focus()
