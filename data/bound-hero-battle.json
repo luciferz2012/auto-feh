@@ -12,7 +12,7 @@
             "button-fight.png": "skip"
         },
         "skip": {
-            "__wait__": 15,
+            "__wait__": 60,
             "__none__": "error",
             "button-skip2.png": "auto"
         },
