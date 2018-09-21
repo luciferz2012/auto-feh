@@ -99,10 +99,11 @@ class StateWalker():
                         break
             if max_match:
                 self.region.wait(delay)
-                if not (max_name.startswith('__') and max_name.endswith('__')):
-                    max_match.click()
                 print('{0}: {1}({2:.2}) -> {3}'
                       .format(self.name, max_img, max_score, max_name))
+                if max_name.startswith('__') and max_name.endswith('__'):
+                    break
+                max_match.click()
             else:
                 break
         return max_name
